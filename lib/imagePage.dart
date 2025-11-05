@@ -38,6 +38,11 @@ class _imagepageState extends State<imagepage> {
     });
   }
 
+  void _confirmImage() {
+    print("ยืนยันรูปภาพ: $_imagePath");
+    print("วันที่บันทึก: $_capturedDate");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,17 +77,29 @@ class _imagepageState extends State<imagepage> {
                 ),
               ),
             ),
-
             if (_capturedDate != null)
               Padding(
                 padding: const EdgeInsets.only(top: 12.0),
-                child: Text(
-                  "วันที่ถ่าย: ${_capturedDate!.day}/${_capturedDate!.month}/${_capturedDate!.year + 543} เวลา ${_capturedDate!.hour.toString().padLeft(2, '0')}:${_capturedDate!.minute.toString().padLeft(2, '0')}",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
+                child: Column(
+                  children: [
+                    const Text(
+                      "บันทึก :",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      "วันที่ถ่าย: ${_capturedDate!.day}/${_capturedDate!.month}/${_capturedDate!.year + 543} เวลา ${_capturedDate!.hour.toString().padLeft(2, '0')}:${_capturedDate!.minute.toString().padLeft(2, '0')}",
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ],
                 ),
               ),
 
@@ -123,6 +140,26 @@ class _imagepageState extends State<imagepage> {
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: 160,
+              height: 45,
+              child: ElevatedButton.icon(
+                onPressed: _imagePath != null ? _confirmImage : null,
+                icon: const Icon(Icons.add_box_outlined),
+                label: const Text('ยืนยันการเข้างาน'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                  disabledBackgroundColor: Colors.grey[400],
+                  disabledForegroundColor: Colors.grey[100],
+
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+              ),
             ),
             const Spacer(),
           ],
