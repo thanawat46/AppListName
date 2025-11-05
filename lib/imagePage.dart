@@ -1,7 +1,42 @@
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 
-class imagepage extends StatelessWidget {
+class imagepage extends StatefulWidget {
   const imagepage({super.key});
+
+  @override
+  State<imagepage> createState() => _imagepageState();
+}
+
+class _imagepageState extends State<imagepage> {
+  String? _imagePath;
+  DateTime? _capturedDate;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _openCamera() async {
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: ImageSource.camera,
+      );
+
+      if (image != null) {
+        setState(() {
+          _imagePath = image.path;
+          _capturedDate = DateTime.now();
+        });
+      }
+    } catch (e) {
+      print("เกิดข้อผิดพลาดตอนเปิดกล้อง: $e");
+    }
+  }
+
+  void _deleteImage() {
+    setState(() {
+      _imagePath = null;
+      _capturedDate = null;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,12 +57,35 @@ class imagepage extends StatelessWidget {
                 color: Colors.grey[300],
                 borderRadius: const BorderRadius.all(Radius.circular(10.0)),
               ),
-              child: const Icon(
+              child: _imagePath == null
+                  ? const Icon(
                 Icons.image_search,
                 size: 80,
                 color: Colors.white,
+              )
+                  : ClipRRect(
+                borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                child: Image.file(
+                  File(_imagePath!),
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                ),
               ),
             ),
+
+            if (_capturedDate != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 12.0),
+                child: Text(
+                  "วันที่ถ่าย: ${_capturedDate!.day}/${_capturedDate!.month}/${_capturedDate!.year + 543} เวลา ${_capturedDate!.hour.toString().padLeft(2, '0')}:${_capturedDate!.minute.toString().padLeft(2, '0')}",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+              ),
+
             const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -36,7 +94,7 @@ class imagepage extends StatelessWidget {
                   width: 140,
                   height: 45,
                   child: ElevatedButton.icon(
-                    onPressed: () {},
+                    onPressed: _deleteImage,
                     icon: const Icon(Icons.delete),
                     label: const Text('ลบรูป'),
                     style: ElevatedButton.styleFrom(
@@ -52,7 +110,7 @@ class imagepage extends StatelessWidget {
                   width: 140,
                   height: 45,
                   child: ElevatedButton.icon(
-                    onPressed: () {},
+                    onPressed: _openCamera,
                     icon: const Icon(Icons.camera_alt),
                     label: const Text('ถ่ายรูป'),
                     style: ElevatedButton.styleFrom(
